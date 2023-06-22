@@ -171,12 +171,12 @@ namespace CustomColorUtil.Harmony
                 return;
             }
 
-            if (iconColor == null ||
+            var iconColorHSV = cardItem.CardColorOptions.IconColor;
+            if (iconColorHSV == null ||
                 hsvvalue == UIColorManager.Manager.CardRangeHsvValue[6]) return;
-            var hsvColor = HSVColors.White;
-            __instance.hsv_rangeIcon._HueShift = hsvColor.H;
-            __instance.hsv_rangeIcon._Saturation = hsvColor.S;
-            __instance.hsv_rangeIcon._ValueBrightness = hsvColor.V;
+            __instance.hsv_rangeIcon._HueShift = iconColorHSV.H;
+            __instance.hsv_rangeIcon._Saturation = iconColorHSV.S;
+            __instance.hsv_rangeIcon._ValueBrightness = iconColorHSV.V;
             __instance.hsv_rangeIcon.CallUpdate();
             __instance.hsv_rangeIcon.enabled = false;
             __instance.hsv_rangeIcon.enabled = true;
@@ -201,12 +201,12 @@ namespace CustomColorUtil.Harmony
                 return;
             }
 
-            if (iconColor == null ||
+            var iconColorHSV = cardItem.CardColorOptions.IconColor;
+            if (iconColorHSV == null ||
                 hsvvalue == UIColorManager.Manager.CardRangeHsvValue[6]) return;
-            var hsvColor = HSVColors.White;
-            __instance.hsv_rangeIcon._HueShift = hsvColor.H;
-            __instance.hsv_rangeIcon._Saturation = hsvColor.S;
-            __instance.hsv_rangeIcon._ValueBrightness = hsvColor.V;
+            __instance.hsv_rangeIcon._HueShift = iconColorHSV.H;
+            __instance.hsv_rangeIcon._Saturation = iconColorHSV.S;
+            __instance.hsv_rangeIcon._ValueBrightness = iconColorHSV.V;
             __instance.hsv_rangeIcon.CallUpdate();
             __instance.hsv_rangeIcon.enabled = false;
             __instance.hsv_rangeIcon.enabled = true;
