@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using CustomColorUtil.Models;
 using CustomColorUtil.Util;
 using HarmonyLib;
 using UI;
