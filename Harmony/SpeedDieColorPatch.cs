@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace CustomColorUtil.Harmony
 {
+    [HarmonyPatch]
     public class SpeedDieColorPatch
     {
         [HarmonyPostfix]
@@ -16,7 +17,8 @@ namespace CustomColorUtil.Harmony
                 ModParameters.KeypageOptions.FirstOrDefault(x =>
                     x.PackageId == __instance._view.model.Book.BookId.packageId &&
                     x.Ids.Contains(__instance._view.model.Book.BookId.id));
-            if (keypageOption?.CustomDiceColorOptions != null)
+            if (keypageOption?.CustomDiceColorOptions != null &&
+                !keypageOption.CustomDiceColorOptions.ChangeAllTeamDice)
             {
                 ArtUtil.ChangeSpeedDiceColor(__instance, keypageOption.CustomDiceColorOptions,
                     __instance._view.model.Book.BookId.packageId);
