@@ -30,7 +30,8 @@ namespace CustomColorUtil.Harmony
                 if (sephirahUnit == null) return;
                 var sephirahKeypageOption = ModParameters.KeypageOptions.FirstOrDefault(x =>
                     x.PackageId == sephirahUnit.Book.BookId.packageId && x.Ids.Contains(sephirahUnit.Book.BookId.id));
-                if (sephirahKeypageOption?.CustomDiceColorOptions != null && sephirahKeypageOption.ChangeAllTeamDice)
+                if (sephirahKeypageOption?.CustomDiceColorOptions != null &&
+                    sephirahKeypageOption.CustomDiceColorOptions.ChangeAllTeamDice)
                     ArtUtil.ChangeSpeedDiceColor(__instance, sephirahKeypageOption.CustomDiceColorOptions,
                         sephirahUnit.Book.BookId.packageId);
                 return;

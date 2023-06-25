@@ -12,7 +12,6 @@ namespace CustomColorUtil.Models
     {
         [XmlElement("KeypageColorOptions")] public ColorOptionsRoot KeypageColorOptions;
         [XmlElement("CustomDiceColorOptions")] public CustomDiceColorOptionRoot CustomDiceColorOptions;
-        [XmlElement("ChangeAllTeamDice")] public bool ChangeAllTeamDice;
 
 
         [XmlElement("Id")] public List<int> Ids;

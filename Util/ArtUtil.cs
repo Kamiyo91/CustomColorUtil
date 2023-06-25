@@ -519,7 +519,7 @@ namespace CustomColorUtil.Util
         {
             var categoryOption =
                 ModParameters.CategoryOptions.FirstOrDefault(
-                    x => storyKey.workshopId == x.PackageId + "_" + x.AdditionalValue);
+                    x => storyKey.workshopId == x.PackageId + x.AdditionalValue);
             if (categoryOption == null) return;
             if (books.Count < 0) return;
             if (categoryOption.BookDataColor == null) return;
@@ -542,7 +542,7 @@ namespace CustomColorUtil.Util
         {
             var categoryOption =
                 ModParameters.CategoryOptions.FirstOrDefault(
-                    x => storyKey.workshopId == x.PackageId + "_" + x.AdditionalValue);
+                    x => storyKey.workshopId == x.PackageId + x.AdditionalValue);
             if (categoryOption == null) return;
             if (books.Count < 0) return;
             if (categoryOption.BookDataColor == null) return;

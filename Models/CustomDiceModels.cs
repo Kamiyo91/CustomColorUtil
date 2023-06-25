@@ -6,5 +6,6 @@ namespace CustomColorUtil.Models
     {
         [XmlElement("IconId")] public string IconId = "";
         [XmlElement("TextColor")] public ColorRoot TextColor;
+        [XmlElement("ChangeAllTeamDice")] public bool ChangeAllTeamDice;
     }
 }
