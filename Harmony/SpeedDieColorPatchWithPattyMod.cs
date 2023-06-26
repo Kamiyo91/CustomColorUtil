@@ -47,4 +47,61 @@ namespace CustomColorUtil.Harmony
                 ArtUtil.ChangeSpeedDiceColor(__instance, stageItem.CustomDiceColorOptions, stageId.packageId);
         }
     }
+
+    [HarmonyPatch]
+    public class SpeedDieColorPatchWithPattyModAndUtil
+    {
+        [HarmonyPostfix]
+        [HarmonyAfter("Patty_SpeedDiceColorChange_MOD")]
+        [HarmonyPatch(typeof(SpeedDiceUI), "Init")]
+        public static void Init(SpeedDiceUI __instance, Faction faction)
+        {
+            var keypageOption =
+                ModParameters.KeypageOptions.FirstOrDefault(x =>
+                    x.PackageId == __instance._view.model.Book.BookId.packageId &&
+                    x.Ids.Contains(__instance._view.model.Book.BookId.id));
+            if (keypageOption?.CustomDiceColorOptions != null &&
+                !keypageOption.CustomDiceColorOptions.ChangeAllTeamDice)
+            {
+                ArtUtil.ChangeSpeedDiceColor(__instance, keypageOption.CustomDiceColorOptions,
+                    __instance._view.model.Book.BookId.packageId);
+                return;
+            }
+
+            if (faction == Faction.Player)
+            {
+                var playerUnits = BattleObjectManager.instance.GetList(Faction.Player);
+                var changeAllTeamUnit = ModParameters.KeypageOptions.FirstOrDefault(x =>
+                    playerUnits.Any(y =>
+                        x.PackageId == y.Book.BookId.packageId && x.Ids.Contains(y.Book.BookId.id) &&
+                        x.CustomDiceColorOptions != null && x.CustomDiceColorOptions.ChangeAllTeamDice));
+                if (changeAllTeamUnit?.CustomDiceColorOptions != null &&
+                    changeAllTeamUnit.CustomDiceColorOptions.ChangeAllTeamDice)
+                {
+                    ArtUtil.ChangeSpeedDiceColor(__instance, changeAllTeamUnit.CustomDiceColorOptions,
+                        changeAllTeamUnit.PackageId);
+                }
+                else if (UtilLoader21341.ModParameters.EgoAndEmotionCardChanged.TryGetValue(
+                             Singleton<StageController>.Instance.CurrentFloor, out var savedOptions))
+                {
+                    if (!savedOptions.IsActive || savedOptions.KeypageId == null) return;
+                    var floorKeypageOption = ModParameters.KeypageOptions.FirstOrDefault(x =>
+                        x.PackageId == savedOptions.FloorOptions?.PackageId &&
+                        x.Ids.Contains(savedOptions.KeypageId.Value));
+                    if (floorKeypageOption == null) return;
+                    ArtUtil.ChangeSpeedDiceColor(__instance, floorKeypageOption.CustomDiceColorOptions,
+                        floorKeypageOption.PackageId);
+                }
+
+                return;
+            }
+
+            var stageId = Singleton<StageController>.Instance.GetStageModel().ClassInfo.id;
+            var stageItem =
+                ModParameters.StageOptions.FirstOrDefault(x =>
+                    x.PackageId == stageId.packageId && x.Ids.Contains(stageId.id));
+            if (stageItem?.CustomDiceColorOptions != null)
+                ArtUtil.ChangeSpeedDiceColor(__instance, stageItem.CustomDiceColorOptions, stageId.packageId);
+        }
+    }
 }

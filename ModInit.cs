@@ -19,9 +19,14 @@ namespace CustomColorUtil
             GenericUtil.OtherModCheck();
             ModParametersUtilLoader.LoadMods();
             ModParameters.Harmony.CreateClassProcessor(typeof(ColorPatch)).Patch();
-            ModParameters.Harmony.CreateClassProcessor(ModParameters.SpeedDiceColorModFound
-                ? typeof(SpeedDieColorPatchWithPattyMod)
-                : typeof(SpeedDieColorPatch)).Patch();
+            if (ModParameters.UtilLoaderDLLFound)
+                ModParameters.Harmony.CreateClassProcessor(ModParameters.SpeedDiceColorModFound
+                    ? typeof(SpeedDieColorPatchWithPattyModAndUtil)
+                    : typeof(SpeedDieColorPatchWithUtil)).Patch();
+            else
+                ModParameters.Harmony.CreateClassProcessor(ModParameters.SpeedDiceColorModFound
+                    ? typeof(SpeedDieColorPatchWithPattyMod)
+                    : typeof(SpeedDieColorPatch)).Patch();
             SceneManager.sceneLoaded += GenericUtil.OnLoadingScreen;
             GenericUtil.RemoveError();
         }
