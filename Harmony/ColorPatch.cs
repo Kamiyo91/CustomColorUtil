@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using CustomColorUtil.Util;
 using HarmonyLib;
@@ -237,6 +238,7 @@ namespace CustomColorUtil.Harmony
                 rightFrame.overrideSprite = null;
             var component = __instance.img_artwork.transform.parent.parent.GetChild(1).GetComponent<Image>();
             if (component != null) component.overrideSprite = null;
+            if(__instance.img_icon.overrideSprite != null) __instance.img_icon.overrideSprite = null;
         }
 
         [HarmonyPatch(typeof(BattleDiceCardUI), "SetCard")]
