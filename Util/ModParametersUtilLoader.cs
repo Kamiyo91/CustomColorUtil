@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Xml.Serialization;
 using CustomColorUtil.Models;
 using Mod;
@@ -12,30 +13,91 @@ namespace CustomColorUtil.Util
 {
     public static class ModParametersUtilLoader
     {
+        private static readonly List<string> IgnoreDll = new List<string>
+        {
+            "0Harmony", "Mono.Cecil", "MonoMod.RuntimeDetour", "MonoMod.Utils", "1BigDLL4221", "1SMotion-Loader",
+            "1CustomColorUtil"
+        };
+
         public static void LoadMods()
         {
             foreach (var modContentInfo in Singleton<ModContentManager>.Instance.GetAllMods().Where(modContentInfo =>
                          modContentInfo.activated &&
-                         modContentInfo.invInfo.workshopInfo.uniqueId != ModParameters.PackageId &&
-                         Directory.Exists(modContentInfo.dirInfo.FullName + "/Assemblies/CustomColorUtil")))
+                         modContentInfo.invInfo.workshopInfo.uniqueId != ModParameters.PackageId))
                 try
                 {
-                    var modId = modContentInfo.invInfo.workshopInfo.uniqueId;
+                    var modId = modContentInfo.invInfo?.workshopInfo?.uniqueId;
                     var path = modContentInfo.dirInfo.FullName + "/Assemblies";
+                    if (string.IsNullOrEmpty(modId) || !Directory.Exists(path)) continue;
+                    var loadBy =
+                        Directory.Exists(modContentInfo.dirInfo.FullName + "/Assemblies/CustomColorUtil")
+                            ? "XML"
+                            : "";
+                    var directoryInfo = new DirectoryInfo(path);
+                    var assemblies = (from fileInfo in directoryInfo.GetFiles()
+                        where fileInfo.Extension.ToLower() == ".dll" && !IgnoreDll.Contains(fileInfo.FullName)
+                        select Assembly.LoadFile(fileInfo.FullName)).ToList();
+                    if (string.IsNullOrEmpty(loadBy) &&
+                        assemblies.Any(x => x.GetType($"{x.GetName().Name}.CustomColorLoader21341") != null))
+                        loadBy = "DLL";
+                    if (string.IsNullOrEmpty(loadBy)) continue;
                     var stopwatch = new Stopwatch();
                     Debug.Log($"Custom Color Util Tool : Start loading mod files {modId} at path {path}");
                     stopwatch.Start();
-                    LoadModParameters(path, modId);
+                    var loadByLog = "Parameters loaded by XML";
+                    if (loadBy.Equals("DLL"))
+                    {
+                        loadByLog = "Parameters loaded by DLL";
+                        LoadModParametersFromDLL(assemblies);
+                    }
+                    else
+                    {
+                        LoadModParameters(path, modId);
+                    }
+
                     ArtUtil.GetArtWorks(new DirectoryInfo(path + "/CustomColorUtil/ArtWork"), modId);
                     stopwatch.Stop();
                     Debug.Log(
-                        $"Custom Color Util Tool : Loading mod files {modId} at path {path} finished in {stopwatch.ElapsedMilliseconds} ms");
+                        $"Custom Color Util Tool : Loading mod files {modId} at path {path} finished in {stopwatch.ElapsedMilliseconds} ms - {loadByLog}");
                 }
                 catch (Exception ex)
                 {
                     Debug.LogError(
-                        $"Error while loading the mod {modContentInfo.invInfo.workshopInfo.uniqueId} - {ex.Message}");
+                        $"Error while loading the mod {modContentInfo.invInfo?.workshopInfo?.uniqueId} - {ex.Message}");
                 }
+        }
+
+        private static void LoadModParametersFromDLL(List<Assembly> assemblies)
+        {
+            foreach (var assembly in assemblies)
+                LoadModParametersDLLInternal(assembly);
+        }
+
+        private static void LoadModParametersDLLInternal(Assembly assembly)
+        {
+            var loaderType = assembly.GetType($"{assembly.GetName().Name}.CustomColorLoader21341");
+            if (loaderType == null) return;
+            ModParameters.CardOptions.AddRange(
+                LoadModParametersDLLMethod<List<CardOptionRoot>>(loaderType.GetMethod(nameof(CardOptionRoot))));
+            ModParameters.CategoryOptions.AddRange(
+                LoadModParametersDLLMethod<List<CategoryOptionRoot>>(loaderType.GetMethod(nameof(CategoryOptionRoot))));
+            ModParameters.DropBookOptions.AddRange(
+                LoadModParametersDLLMethod<List<DropBookOptionRoot>>(loaderType.GetMethod(nameof(DropBookOptionRoot))));
+            ModParameters.EmotionCardOptions.AddRange(
+                LoadModParametersDLLMethod<List<EmotionCardOptionRoot>>(
+                    loaderType.GetMethod(nameof(EmotionCardOptionRoot))));
+            ModParameters.KeypageOptions.AddRange(
+                LoadModParametersDLLMethod<List<KeypageOptionRoot>>(loaderType.GetMethod(nameof(KeypageOptionRoot))));
+            ModParameters.PassiveOptions.AddRange(
+                LoadModParametersDLLMethod<List<PassiveOptionRoot>>(loaderType.GetMethod(nameof(PassiveOptionRoot))));
+            ModParameters.StageOptions.AddRange(
+                LoadModParametersDLLMethod<List<StageOptionRoot>>(loaderType.GetMethod(nameof(StageOptionRoot))));
+        }
+
+        public static T LoadModParametersDLLMethod<T>(MethodInfo method) where T : new()
+        {
+            if (method == null) return new T();
+            return (T)method.Invoke(null, null);
         }
 
         private static void LoadModParameters(string path, string modId)
