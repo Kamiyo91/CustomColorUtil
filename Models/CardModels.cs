@@ -10,7 +10,7 @@ namespace CustomColorUtil.Models
 
     public class CardOptionRoot
     {
-        [XmlElement("Id")] public List<int> Ids;
+        [XmlElement("Id")] public List<int> Ids = new List<int>();
         [XmlElement("CardColorOptions")] public CardColorOptionRoot CardColorOptions;
 
 
@@ -27,11 +27,24 @@ namespace CustomColorUtil.Models
         [XmlElement("CardColor")] public ColorRoot CardColor;
         [XmlElement("CustomIcon")] public string CustomIcon = "";
         [XmlElement("CustomIconColor")] public ColorRoot CustomIconColor;
+        [XmlElement("CustomDiceIcon")] public List<CustomDiceIconRoot> CustomDiceIcon = new List<CustomDiceIconRoot>();
 
 
         [XmlElement("IconColor")] public HsvColorRoot IconColor;
 
 
         [XmlElement("UseHSVFilter")] public bool UseHSVFilter = true;
+    }
+
+    public class CustomDiceIconRoot
+    {
+        [XmlElement("KeywordIconId")] public string KeywordIconId = "";
+        [XmlElement("TextColor")] public ColorRoot TextColor;
+        [XmlElement("DiceColor")] public ColorRoot DiceColor;
+        [XmlAttribute("DiceNumber")] public int DiceNumber;
+
+
+        [XmlElement("KeywordIconIdClash")] public string KeywordIconIdClash = "";
+        [XmlAttribute("PackageId")] public string PackageId = "";
     }
 }

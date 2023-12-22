@@ -72,9 +72,14 @@
     <Reference Include="UnityEngine.UI">
       <HintPath>..\..\DLL\bin\Release\UnityEngine.UI.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.UIModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\CommonDLL\UnityEngine.UIModule.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Harmony\ColorPatch.cs" />
+    <Compile Include="Harmony\CombatDiceColorPatch.cs" />
     <Compile Include="Harmony\EmotionCardColorPatch.cs" />
     <Compile Include="Harmony\EmotionCardColorPatchWithoutTiphMod.cs" />
     <Compile Include="Harmony\EmotionCardColorPatchWithTiphMod.cs" />

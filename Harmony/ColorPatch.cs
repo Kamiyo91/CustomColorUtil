@@ -247,6 +247,24 @@ namespace CustomColorUtil.Harmony
             var cardItem = ModParameters.CardOptions.FirstOrDefault(x =>
                 x.PackageId == cardModel.GetID().packageId && x.Ids.Contains(cardModel.GetID().id));
             if (cardItem == null) return;
+            if (cardItem.CardColorOptions.CustomDiceIcon.Any())
+            {
+                var behaviourList = __instance._cardModel.GetBehaviourList();
+                for (var i = 0; i < behaviourList.Count; i++)
+                {
+                    var customIconData =
+                        cardItem.CardColorOptions.CustomDiceIcon.FirstOrDefault(x => x.DiceNumber == i);
+                    if (customIconData == null) continue;
+                    var sprite = ModParameters.ArtWorks
+                        .FirstOrDefault(x =>
+                            x.PackageId == customIconData.PackageId && x.Name == customIconData.KeywordIconId)
+                        ?.Sprite;
+                    if (sprite == null) continue;
+                    __instance.img_behaviourDetatilList[i].sprite = sprite;
+                    __instance.img_behaviourDetatilList[i].gameObject.SetActive(true);
+                }
+            }
+
             var cardColor = cardItem.CardColorOptions.CardColor.ConvertColor();
             if (cardColor != null)
             {

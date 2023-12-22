@@ -120,6 +120,24 @@ namespace CustomColorUtil.Util
                     }
                 }
 
+            if (cardColorOption.CustomDiceIcon.Any())
+            {
+                var behaviourList = instance._cardModel.GetBehaviourList();
+                for (var i = 0; i < instance.img_BehaviourIcons.Length; i++)
+                {
+                    if (i >= behaviourList.Count) continue;
+                    var customIconData = cardColorOption.CustomDiceIcon.FirstOrDefault(x => x.DiceNumber == i);
+                    if (customIconData == null) continue;
+                    var sprite = ModParameters.ArtWorks
+                        .FirstOrDefault(x =>
+                            x.PackageId == customIconData.PackageId && x.Name == customIconData.KeywordIconId)
+                        ?.Sprite;
+                    if (sprite == null) continue;
+                    instance.img_BehaviourIcons[i].sprite = sprite;
+                    instance.img_BehaviourIcons[i].gameObject.SetActive(true);
+                }
+            }
+
             if (string.IsNullOrEmpty(cardColorOption.CustomIcon)) return;
             var icon = ModParameters.ArtWorks.FirstOrDefault(x =>
                 x.PackageId == packageId && x.Name == cardColorOption.CustomIcon);
@@ -173,6 +191,24 @@ namespace CustomColorUtil.Util
                             component.color = cardColor.Value;
                     }
                 }
+
+            if (cardColorOption.CustomDiceIcon.Any())
+            {
+                var behaviourList = instance._cardModel.GetBehaviourList();
+                for (var i = 0; i < instance.img_BehaviourIcons.Length; i++)
+                {
+                    if (i >= behaviourList.Count) continue;
+                    var customIconData = cardColorOption.CustomDiceIcon.FirstOrDefault(x => x.DiceNumber == i);
+                    if (customIconData == null) continue;
+                    var sprite = ModParameters.ArtWorks
+                        .FirstOrDefault(x =>
+                            x.PackageId == customIconData.PackageId && x.Name == customIconData.KeywordIconId)
+                        ?.Sprite;
+                    if (sprite == null) continue;
+                    instance.img_BehaviourIcons[i].sprite = sprite;
+                    instance.img_BehaviourIcons[i].gameObject.SetActive(true);
+                }
+            }
 
             if (string.IsNullOrEmpty(cardColorOption.CustomIcon)) return;
             var icon = ModParameters.ArtWorks.FirstOrDefault(x =>
@@ -593,6 +629,99 @@ namespace CustomColorUtil.Util
             component.underlayColor = defaultColor;
             component.enabled = false;
             component.enabled = true;
+        }
+
+        public static void SetColorsCustom(this BattleSimpleActionUI_Dice instance, Color internalColor,
+            Color externalColor)
+        {
+            instance.img_diceFace.color = internalColor;
+            instance.img_diceFaceLinearDodge.color = externalColor;
+            instance.img_ActionDefeatDestoryed.color = internalColor;
+            instance.img_ActionDefeatDestoryedLinear.color = externalColor;
+            instance.img_ActionDefeatDestoryed.gameObject.SetActive(false);
+            instance.originColor = internalColor;
+            instance.SetValueColor(BattleDiceValueColor.Normal);
+            instance.img_diceFaceClone.color = instance.img_diceFace.color;
+            instance.img_diceFaceLinearDodgeClone.color = instance.img_diceFaceLinearDodge.color;
+        }
+
+        public static void SetCenterIconSpriteCustom(this BattleSimpleActionUI_Dice instance, string packageId,
+            string keywordIconId, bool enabled = true)
+        {
+            var icon = ModParameters.ArtWorks.FirstOrDefault(x => x.PackageId == packageId && x.Name == keywordIconId);
+            if (icon == null) return;
+            instance.imgDetailIcon_Center.enabled = enabled;
+            instance.imgDetailIcon_Center.sprite = icon.Sprite;
+        }
+
+        public static void SetRangeTextCustom(this BattleSimpleActionUI_Dice instance, Color color)
+        {
+            instance.txt_diceRange.color = color;
+        }
+
+        public static void SetBehaviourInfoCustom(this UIDetailCardDescSlot instance, Color textColor, string packageId,
+            string keywordIconId)
+        {
+            var icon = ModParameters.ArtWorks.FirstOrDefault(x => x.PackageId == packageId && x.Name == keywordIconId);
+            if (icon != null) instance.img_detail.sprite = icon.Sprite;
+            if (instance.txt_range == null) return;
+            instance.txt_range.color = textColor;
+        }
+
+        public static void SetBehaviourInfoCustom(this BattleDiceCard_BehaviourDescUI instance, Color textColor,
+            string packageId, string keywordIconId)
+        {
+            var icon = ModParameters.ArtWorks.FirstOrDefault(x => x.PackageId == packageId && x.Name == keywordIconId);
+            if (icon != null) instance.img_detail.sprite = icon.Sprite;
+            if (instance.txt_range == null) return;
+            instance.txt_range.color = textColor;
+        }
+
+        public static void PrepareDiceCustom(this BattleSimpleActionUI_Dice instance, BattleDiceBehavior b)
+        {
+            if (b.card?.card == null) return;
+            var cardOption = ModParameters.CardOptions.FirstOrDefault(x =>
+                x.PackageId == b.card.card.GetID()?.packageId &&
+                x.Ids.Contains(b.card.card.GetID().id));
+            var dice = cardOption?.CardColorOptions.CustomDiceIcon.FirstOrDefault(x => x.DiceNumber == b._index);
+            if (dice == null) return;
+            var diceColor = dice.DiceColor.ConvertColor();
+            if (diceColor.HasValue) instance.SetColorsCustom(diceColor.Value, diceColor.Value);
+            instance.SetCenterIconSpriteCustom(dice.PackageId, dice.KeywordIconIdClash, false);
+            var textColor = dice.TextColor.ConvertColor();
+            if (textColor.HasValue) instance.SetRangeTextCustom(textColor.Value);
+        }
+
+        public static void PrepareDiceCustom(this BattleSimpleActionUI_Dice instance, BattleDiceBehaviourUI b)
+        {
+            if (instance._cardOfBehaviour == null) return;
+            var cardOption = ModParameters.CardOptions.FirstOrDefault(x =>
+                x.PackageId == instance._cardOfBehaviour.GetID()?.packageId &&
+                x.Ids.Contains(instance._cardOfBehaviour.GetID().id));
+            var dice = cardOption?.CardColorOptions.CustomDiceIcon.FirstOrDefault(x => x.DiceNumber == b._index);
+            if (dice == null) return;
+            var diceColor = dice.DiceColor.ConvertColor();
+            if (diceColor.HasValue) instance.SetColorsCustom(diceColor.Value, diceColor.Value);
+            instance.SetCenterIconSpriteCustom(dice.PackageId, dice.KeywordIconIdClash, false);
+            var textColor = dice.TextColor.ConvertColor();
+            if (textColor.HasValue) instance.SetRangeTextCustom(textColor.Value);
+        }
+
+        public static void PrepareDiceCustom(this BattleSimpleActionUI_Dice instance,
+            List<BattleCardBehaviourResult> battleDiceBehaviorResults)
+        {
+            if (battleDiceBehaviorResults == null || !battleDiceBehaviorResults.Any()) return;
+            var b = battleDiceBehaviorResults.FirstOrDefault();
+            if (b?.cardModel == null) return;
+            var cardOption = ModParameters.CardOptions.FirstOrDefault(x =>
+                x.PackageId == b.cardModel.GetID().packageId && x.Ids.Contains(b.cardModel.GetID().id));
+            var dice = cardOption?.CardColorOptions.CustomDiceIcon.FirstOrDefault(x => x.DiceNumber == b.behaviourIdx);
+            if (dice == null) return;
+            var diceColor = dice.DiceColor.ConvertColor();
+            if (diceColor.HasValue) instance.SetColorsCustom(diceColor.Value, diceColor.Value);
+            instance.SetCenterIconSpriteCustom(dice.PackageId, dice.KeywordIconIdClash);
+            var textColor = dice.TextColor.ConvertColor();
+            if (textColor.HasValue) instance.SetRangeTextCustom(textColor.Value);
         }
     }
 }

@@ -19,6 +19,7 @@ namespace CustomColorUtil
             GenericUtil.OtherModCheck();
             ModParametersUtilLoader.LoadMods();
             ModParameters.Harmony.CreateClassProcessor(typeof(ColorPatch)).Patch();
+            ModParameters.Harmony.CreateClassProcessor(typeof(CombatDiceColorPatch)).Patch();
             if (ModParameters.UtilLoaderDLLFound)
                 ModParameters.Harmony.CreateClassProcessor(ModParameters.SpeedDiceColorModFound
                     ? typeof(SpeedDieColorPatchWithPattyModAndUtil)
