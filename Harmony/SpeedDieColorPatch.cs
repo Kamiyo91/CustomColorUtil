@@ -104,7 +104,7 @@ namespace CustomColorUtil.Harmony
                     var floorKeypageOption = ModParameters.KeypageOptions.FirstOrDefault(x =>
                         x.PackageId == savedOptions.FloorOptions?.PackageId &&
                         x.Ids.Contains(savedOptions.KeypageId.Value));
-                    if (floorKeypageOption == null) return;
+                    if (floorKeypageOption?.CustomDiceColorOptions == null) return;
                     ArtUtil.ChangeSpeedDiceColor(__instance, floorKeypageOption.CustomDiceColorOptions,
                         floorKeypageOption.PackageId);
                 }

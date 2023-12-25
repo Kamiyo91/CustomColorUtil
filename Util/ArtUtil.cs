@@ -513,7 +513,7 @@ namespace CustomColorUtil.Util
         public static void ChangeSpeedDiceColor(SpeedDiceUI instance, CustomDiceColorOptionRoot colorOptions,
             string packageId)
         {
-            if (instance == null) return;
+            if (instance == null || colorOptions == null) return;
             if (!string.IsNullOrEmpty(colorOptions.IconId))
             {
                 var normalFrame =
