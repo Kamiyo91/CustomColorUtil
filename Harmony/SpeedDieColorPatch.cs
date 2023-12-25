@@ -104,9 +104,20 @@ namespace CustomColorUtil.Harmony
                     var floorKeypageOption = ModParameters.KeypageOptions.FirstOrDefault(x =>
                         x.PackageId == savedOptions.FloorOptions?.PackageId &&
                         x.Ids.Contains(savedOptions.KeypageId.Value));
-                    if (floorKeypageOption?.CustomDiceColorOptions == null) return;
-                    ArtUtil.ChangeSpeedDiceColor(__instance, floorKeypageOption.CustomDiceColorOptions,
-                        floorKeypageOption.PackageId);
+                    if (floorKeypageOption?.CustomDiceColorOptions != null)
+                    {
+                        ArtUtil.ChangeSpeedDiceColor(__instance, floorKeypageOption.CustomDiceColorOptions,
+                            floorKeypageOption.PackageId);
+                        return;
+                    }
+
+                    if (!savedOptions.PassiveId.HasValue) return;
+                    var passiveKeypageOption = ModParameters.PassiveOptions.FirstOrDefault(x =>
+                        x.PackageId == savedOptions.FloorOptions?.PackageId &&
+                        x.Ids.Contains(savedOptions.PassiveId.Value));
+                    if (passiveKeypageOption?.CustomDiceColorOptions != null)
+                        ArtUtil.ChangeSpeedDiceColor(__instance, passiveKeypageOption.CustomDiceColorOptions,
+                            passiveKeypageOption.PackageId);
                 }
 
                 return;

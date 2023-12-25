@@ -11,7 +11,10 @@ namespace CustomColorUtil.Models
     public class PassiveOptionRoot
     {
         [XmlElement("Id")] public List<int> Ids;
-        [XmlAttribute("PackageId")] public string PackageId = "";
         [XmlElement("PassiveColorOptions")] public ColorOptionsRoot PassiveColorOptions;
+        [XmlElement("CustomDiceColorOptions")] public CustomDiceColorOptionRoot CustomDiceColorOptions;
+
+
+        [XmlAttribute("PackageId")] public string PackageId = "";
     }
 }
