@@ -49,13 +49,14 @@ namespace CustomColorUtil.Util
                     {
                         loadByLog = "Parameters loaded by DLL";
                         LoadModParametersFromDLL(assemblies);
+                        ArtUtil.GetArtWorks(new DirectoryInfo(path + "/CustomColorArtWork"), modId);
                     }
                     else
                     {
                         LoadModParameters(path, modId);
+                        ArtUtil.GetArtWorks(new DirectoryInfo(path + "/CustomColorUtil/ArtWork"), modId);
                     }
 
-                    ArtUtil.GetArtWorks(new DirectoryInfo(path + "/CustomColorUtil/ArtWork"), modId);
                     stopwatch.Stop();
                     Debug.Log(
                         $"Custom Color Util Tool : Loading mod files {modId} at path {path} finished in {stopwatch.ElapsedMilliseconds} ms - {loadByLog}");
